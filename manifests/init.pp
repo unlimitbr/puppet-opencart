@@ -81,18 +81,23 @@ class opencart ( $source     = 'https://github.com/opencart/opencart.git',
     options => ['Indexes','FollowSymLinks'],
     require => Vcsrepo["$installdir"],
   }
+  host { $vhostname:
+    ip => '127.0.0.1',
+  }
+
 
   # Prereqs
   $pkgs = [ 'php5' ]
   ensure_packages ( $pkgs )
 
   # PHP Cache Config
-  php::module { [ 'apc', 
-                  'mysql',
-                  'curl',
-                  'gd',
-                  'mcrypt',
-                ]: }
+  ensure_resource('php::module', 
+                  ['apc',
+                   'mysql',
+                   'curl',
+                   'mcrypt',
+                   'gd',
+                   'mysql'] )
   php::module::ini { 'apc':
     settings => {
       'apc.enabled'      => '1',
